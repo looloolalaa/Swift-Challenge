@@ -1,32 +1,43 @@
-// check com[-1].1
+// [start..<start+spl]
 import Foundation
 
 func solution(_ s:String) -> Int {
-    let s = Array(s)
     
-    var candis: [Int] = []
-    for n in (1...s.count) {
-        var compressed = [(1, s[0..<n])]
-
-        var i = n
-        while i+n <= s.count {
-            if compressed[compressed.count-1].1 == s[i..<i+n] {
-                compressed[compressed.count-1].0 += 1
+    func compress(_ s: [String]) -> String {
+        var res = ""
+        var now = ""
+        var counter = 1
+        for c in (s + [""]) {
+            let st = String(c)
+            if now != st {
+                res += counter > 1 ? "\(counter)\(now)" : "\(now)"
+                now = st
+                counter = 1
             } else {
-                compressed.append((1, s[i..<i+n]))
+                counter += 1
             }
-            i += n
         }
-        compressed.append((1, s[i...]))
-        
-        let comStr: [String] = compressed.map { c, arr in
-            if c == 1 { return String(arr) }
-            else { return String(c) + String(arr) }
-        }
-        candis.append(comStr.joined().count)
+
+        return res
     }
     
-    return candis.min()!
+    
+    let s = Array(s)
+    
+    var result = 1000
+    for spl in 1...s.count {
+        var candis: [String] = []
+        var start = 0
+        while start + spl <= s.count {
+            candis.append(String(s[start..<start+spl]))
+            start += spl
+        }
+        candis.append(String(s[start...]))
+
+        result = min(result, (compress(candis).count))
+    }
+    
+    return result
 }
 
 
