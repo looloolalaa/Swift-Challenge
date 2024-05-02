@@ -1,36 +1,29 @@
-// 백트래킹
+// dfs
+import Foundation
+
 let N = Int(readLine()!)!
-
-var table = Array(repeating: -1, count: N)
-
-func valid(_ i: Int, _ j: Int) -> Bool {
-    for x in 0..<i {
-        if table[x] == j || (i - x) == abs(table[x] - j) {
-            return false
-        }
-    }
-    
-    return true
-}
+var board = Array(repeating: -1, count: N)
 
 var res = 0
-func dfs(_ i: Int) {
-    if i == N {
-//        print(table)
+func dfs(_ depth: Int) {
+    if depth == N {
         res += 1
         return
     }
     
-    var valids: [Int] = []
-    for j in 0..<N {
-        if valid(i, j) {
-            valids.append(j)
+    func canPut(_ j: Int) -> Bool {
+        for i in 0..<depth {
+            if board[i] == j || abs(board[i]-j) == depth-i {
+                return false
+            }
         }
+        return true
     }
     
-    for j in valids {
-        table[i] = j
-        dfs(i+1)
+    for j in (0..<N).filter({ canPut($0) }) {
+        board[depth] = j
+        dfs(depth+1)
+        board[depth] = -1
     }
 }
 
